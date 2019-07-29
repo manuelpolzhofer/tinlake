@@ -17,9 +17,9 @@ test -z "$SKIP_BUILD" && dapp build
 test -z "$GOD_ADDR" && GOD_ADDR=$(seth --to-address "0x00000000000000000000") 
 
 # Fabs
-TITLE_FAB=$(dapp create TitleFab)
-LIGHTSWITCH_FAB=$(dapp create LightSwitchFab)
-PILE_FAB=$(dapp create PileFab)
+TITLE_FAB=0x8c427c2b7a953f0f95a7b1eb67adf0624dc2a06c
+LIGHTSWITCH_FAB=0x36057b35cfa950c0d6acb0c6eb21c4435cd09b82
+PILE_FAB=0x43e2dd66e9716537573d687f8fd5035ecdeca1a2
 SHELF_FAB=$(dapp create ShelfFab)
 COLLATERAL_FAB=$(dapp create CollateralFab)
 DESK_FAB=$(dapp create DeskFab)

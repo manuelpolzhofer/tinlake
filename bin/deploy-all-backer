@@ -2,10 +2,10 @@
 BIN_DIR=${BIN_DIR:-$(cd "${0%/*}"&&pwd)}
 
 # Define currency address like DAI ERC20
-export CURRENCY=0x00000000000000000000
+export CURRENCY=0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359
 
 # Define nft registry for deployment
-export NFT_COLLATERAL=0x00000000000000000000
+export NFT_COLLATERAL=0xfc2af5839039c9a3f4ff289947de3c102459882e
 
 export CURRENCY_COLLATERAL_DEPLOYED=1
 $BIN_DIR/deploy-basic-backer
