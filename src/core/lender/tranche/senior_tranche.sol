@@ -19,9 +19,9 @@ import "./tranche.sol";
 import "tinlake-math/interest.sol";
 
 // SeniorTranche
-// Interface to the senior tranche. keeps track of the current debt towards the tranche. 
+// Interface to the senior tranche. keeps track of the current debt towards the tranche.
 contract SeniorTranche is Tranche, Interest {
-    
+
     uint internal chi;              // accumulated interest over time
     uint public ratePerSecond;      // interest rate per second in RAD (10^27)
     uint public lastUpdated;        // Last time the accumlated rate has been updated
@@ -32,11 +32,7 @@ contract SeniorTranche is Tranche, Interest {
 
     function debt() public returns(uint) {
         drip();
-        return rmul(pie, chi);
-    }
-
-    function toPie(uint amount) internal returns(uint) {
-        return rdiv(amount, chi);
+        return toAmount(chi, pie);
     }
 
     constructor(address token_, address currency_) Tranche(token_ ,currency_) public {
@@ -46,7 +42,7 @@ contract SeniorTranche is Tranche, Interest {
     }
 
     function file(bytes32 what, uint ratePerSecond_) public note auth {
-         if (what ==  "rate") {
+        if (what ==  "rate") {
             drip();
             ratePerSecond = ratePerSecond_;
         }
@@ -54,20 +50,20 @@ contract SeniorTranche is Tranche, Interest {
 
     function repay(address usr, uint currencyAmount) public note auth {
         drip();
-        pie = sub(pie, toPie(currencyAmount));
+        pie = sub(pie, toPie(chi, currencyAmount));
         super.repay(usr, currencyAmount);
 
     }
 
     function borrow(address usr, uint currencyAmount) public note auth {
         drip();
-        pie = add(pie, toPie(currencyAmount));
+        pie = add(pie, toPie(chi, currencyAmount));
         super.borrow(usr, currencyAmount);
     }
 
     function drip() internal {
         if (now >= lastUpdated) {
-            chi = rmul(rpow(ratePerSecond, now - lastUpdated, ONE), chi);
+            chi = updateChi(chi, ratePerSecond, lastUpdated);
             lastUpdated = now;
         }
     }
