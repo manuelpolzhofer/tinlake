@@ -420,6 +420,21 @@ contract ProportionalOperatorTest is DSTest, Math {
 
         assertEq(totalA, uint(142999999999999999998));
     }
+
+    function testMigration() public {
+        ProportionalOperator newVersion = new ProportionalOperator(address(tranche), address(assessor), address(distributor));
+        operator.approve(address(investorA), 100 ether);
+        operator.approve(address(investorB), 50 ether);
+
+        investorA.doSupply(operator_ ,25 ether);
+        investorB.doSupply(operator_ , 30 ether);
+
+        newVersion.migrate();
+
+        assertEq(newVersion.totalPrincipal(), operator.totalPrincipal());
+        assertEq(newVersion.supplyMaximum(investorA_), operator.supplyMaximum(investorA_));
+        assertEq(newVersion.tokenReceived(investorA_), operator.tokenReceived(investorA_));
+    }
 }
 
 

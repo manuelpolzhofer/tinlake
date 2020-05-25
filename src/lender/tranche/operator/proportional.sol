@@ -67,11 +67,50 @@ contract ProportionalOperator is Math, DSNote, Auth  {
     // denominated in currency
     uint public totalPrincipal;
 
+    bool public migrated = false;
+
     constructor(address tranche_, address assessor_, address distributor_) public {
         wards[msg.sender] = 1;
         tranche = TrancheLike(tranche_);
         assessor = AssessorLike(assessor_);
         distributor = DistributorLike(distributor_);
+
+    }
+
+    function migrate() public {
+        require(migrated == false);
+        address oldVersion = address(0xD9ced1c2A058f4d60e392f6DA2898594138B5ac0);
+
+        ProportionalOperator old = ProportionalOperator(oldVersion);
+
+        /*
+
+        address payable[10] memory investors = [
+            address(0xFce0d496D9059e9Ba589836EDF39AB204dBEe04f),
+            address(0x5D28d3A7313d391e9B24C899fC6AB84c9a3d814B),
+            address(0xb9d64860F0064DBFB9b64065238dDA80D36FcA17),
+            address(0xb285c461109C2112dB37087C4a907c2ee7c20e86),
+            address(0x00fC7fCf89ca511D0FC22fF5Fb5Dc8D5BE3733AD),
+            address(0x022a21f88E09fB72Be21fA0D9E083a465A38B586),
+            address(0xC2F61a6eEEC48d686901D325CDE9233b81c793F3),
+            address(0xa3D4926721E60fA5844Cea20FF3dEA1E72B10462),
+            address(0x83662DAa45F8B74a589cCF0C0587022678ca2306),
+            address(0xFBAF25cD02C3C3721a660F1fdaC4d7AAC60aA54F)];
+        */
+
+        address payable[2] memory investors = [
+        address(0xEcEDFd8BA8ae39a6Bd346Fe9E5e0aBeA687fFF31),
+        address(0x956378240adc1e2Ce39bCA0e957bE5324e846a4E)];
+
+
+        totalPrincipal = old.totalPrincipal();
+
+        for (uint i = 0; i < 2; i++) {
+            supplyMaximum[investors[i]] = old.supplyMaximum(investors[i]);
+            tokenReceived[investors[i]] = old.tokenReceived(investors[i]);
+        }
+
+        migrated = true;
     }
 
     /// sets the dependency to another contract
