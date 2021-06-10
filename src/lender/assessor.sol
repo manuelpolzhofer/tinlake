@@ -250,13 +250,8 @@ contract Assessor is Definitions, Auth, Interest {
     }
 
     function dripSeniorDebt() public returns (uint) {
-        uint newSeniorDebt = seniorDebt();
-
-        if (newSeniorDebt > seniorDebt_) {
-            seniorDebt_ = newSeniorDebt;
-            lastUpdateSeniorInterest = block.timestamp;
-        }
-
+        seniorDebt_ = seniorDebt();
+        lastUpdateSeniorInterest = block.timestamp;
         return seniorDebt_;
     }
 
@@ -338,7 +333,7 @@ contract Assessor is Definitions, Auth, Interest {
         if(remainingCredit_ > stabilityBuffer) {
             return safeSub(remainingCredit_, stabilityBuffer);
         }
-        
+
         return 0;
     }
 

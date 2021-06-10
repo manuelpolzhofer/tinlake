@@ -149,10 +149,16 @@ contract Shelf is Auth, TitleOwned, Math {
             subscriber.borrowEvent(loan);
         }
         pile.accrue(loan);
-        ceiling.borrow(loan, currencyAmount);
-        pile.incDebt(loan, currencyAmount);
+
         balances[loan] = safeAdd(balances[loan], currencyAmount);
         balance = safeAdd(balance, currencyAmount);
+
+        // request currency from lender contracts
+        reserve.balance();
+
+        ceiling.borrow(loan, currencyAmount);
+        pile.incDebt(loan, currencyAmount);
+
         emit Borrow(loan, currencyAmount);
     }
 
