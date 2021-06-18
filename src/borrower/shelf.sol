@@ -163,13 +163,11 @@ contract Shelf is Auth, TitleOwned, Math {
     }
 
 
-    // transfers the requested currencyAmount to the address of the loan owner
-    // the method triggers the reserve to ensure the shelf has enough currency
+    // withdraw transfers the currency to the borrower account
     function withdraw(uint loan, uint currencyAmount, address usr) external owner(loan) {
         require(nftLocked(loan), "nft-not-locked");
         require(currencyAmount <= balances[loan], "withdraw-amount-too-high");
 
-        reserve.balance();
         balances[loan] = safeSub(balances[loan], currencyAmount);
         balance = safeSub(balance, currencyAmount);
         require(currency.transfer(usr, currencyAmount), "currency-transfer-failed");
