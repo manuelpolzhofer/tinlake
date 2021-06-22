@@ -169,10 +169,8 @@ contract Reserve is Math, Auth {
 
             currencyAvailable = safeSub(currencyAvailable, currencyAmount);
             _payout(address(shelf), currencyAmount);
-            assessor.borrowUpdate(currencyAmount);
             return;
         }
         _deposit(address(shelf), currencyAmount);
-        assessor.repaymentUpdate(currencyAmount);
     }
 }

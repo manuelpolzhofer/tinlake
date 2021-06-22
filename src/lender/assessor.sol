@@ -211,7 +211,7 @@ contract Assessor is Definitions, Auth, Interest {
         return rdiv(safeAdd(safeSub(totalAssets, seniorAssetValue), juniorStake),
             juniorTranche.tokenSupply());
     }
-    
+
     function dripSeniorDebt() public returns (uint) {
         seniorDebt_ = seniorDebt();
         lastUpdateSeniorInterest = block.timestamp;
