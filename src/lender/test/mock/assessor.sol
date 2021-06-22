@@ -123,7 +123,7 @@ contract AssessorMock is Mock {
         values_uint["changeSeniorAsset_seniorRedeem"] = seniorRedeem;
     }
 
-    
+
     function totalBalance() public view returns (uint) {
         return values_return["balance"];
     }

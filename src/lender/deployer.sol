@@ -166,11 +166,9 @@ contract LenderDeployer is FixedPoint {
 
         // required depends
         // reserve
-        DependLike(reserve).depend("assessor", assessor);
         AuthLike(reserve).rely(seniorTranche);
         AuthLike(reserve).rely(juniorTranche);
         AuthLike(reserve).rely(coordinator);
-        AuthLike(reserve).rely(assessor);
 
 
         // tranches
