@@ -40,14 +40,22 @@ interface SubscriberLike {
     function unlockEvent(uint loan) external;
 }
 
+interface AssessorLike {
+    function reBalance() external;
+}
+
 contract Shelf is Auth, TitleOwned, Math {
 
     // --- Data ---
-    NAVFeedLike public ceiling;
-    PileLike public pile;
-    TokenLike public currency;
-    ReserveLike public reserve;
-    SubscriberLike public subscriber;
+    NAVFeedLike         public ceiling;
+    PileLike            public pile;
+    TokenLike           public currency;
+    ReserveLike         public reserve;
+    AssessorLike        public assessor;
+    SubscriberLike      public subscriber;
+
+    uint                public balance;
+    address             public lender;
 
     struct Loan {
         address registry;
@@ -57,9 +65,6 @@ contract Shelf is Auth, TitleOwned, Math {
     mapping (uint => uint) public balances;
     mapping (uint => Loan) public shelf;
     mapping (bytes32 => uint) public nftlookup;
-
-    uint public balance;
-    address public lender;
 
     // Events
     event Close(uint indexed loan);
@@ -91,8 +96,9 @@ contract Shelf is Auth, TitleOwned, Math {
         else if (contractName == "title") { title = TitleLike(addr); }
         else if (contractName == "pile") { pile = PileLike(addr); }
         else if (contractName == "ceiling") { ceiling = NAVFeedLike(addr); }
-        else if (contractName == "reserve") { reserve = ReserveLike(addr);}
-        else if (contractName == "subscriber") { subscriber = SubscriberLike(addr);}
+        else if (contractName == "reserve") { reserve = ReserveLike(addr); }
+        else if (contractName == "assessor") { assessor = AssessorLike(addr);}
+        else if (contractName == "subscriber") { subscriber = SubscriberLike(addr); }
         else revert();
     }
 
@@ -156,8 +162,12 @@ contract Shelf is Auth, TitleOwned, Math {
         // request currency from lender contracts
         reserve.balance();
 
+        // increase NAV
         ceiling.borrow(loan, currencyAmount);
         pile.incDebt(loan, currencyAmount);
+
+        // reBalance lender interest bearing amount based on new NAV
+        assessor.reBalance();
 
         emit Borrow(loan, currencyAmount);
     }
@@ -196,6 +206,8 @@ contract Shelf is Auth, TitleOwned, Math {
         pile.decDebt(loan, loanDebt);
         resetLoanBalance(loan);
         reserve.balance();
+        // reBalance lender interest bearing amount based on new NAV
+        assessor.reBalance();
         emit Recover(loan, usr, currencyAmount);
     }
 
@@ -211,6 +223,9 @@ contract Shelf is Auth, TitleOwned, Math {
         ceiling.repay(loan, currencyAmount);
         pile.decDebt(loan, currencyAmount);
         reserve.balance();
+
+        // reBalance lender interest bearing amount based on new NAV
+        assessor.reBalance();
     }
 
     // locks an nft in the shelf
