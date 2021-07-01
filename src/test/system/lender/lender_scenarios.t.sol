@@ -58,7 +58,7 @@ contract LenderSystemTest is TestSuite, Interest {
 
     }
 
-    function calcInterest(uint amount, uint time, uint ratePerSecond) public pure returns(uint) {
+    function calcInterest(uint amount, uint time, uint ratePerSecond)   public pure returns(uint) {
         return rmul(rpow(ratePerSecond, time, ONE), amount);
     }
 
@@ -84,7 +84,7 @@ contract LenderSystemTest is TestSuite, Interest {
 
         assertEq(assessor.seniorRatio(), rdiv(safeAdd(assessor.seniorBalance_(), assessor.seniorDebt())
         , safeAdd(preNAV, reserve.totalBalance())));
-        
+
         assertEq(assessor.seniorRatio(), rdiv(safeAdd(assessor.seniorBalance_(), assessor.seniorDebt())
         , safeAdd(preNAV, reserve.totalBalance())));
 
